@@ -1,7 +1,7 @@
 {
   "name": "x-data-processing",
-  "version": "1.0.0",
-  "description": "数据合并",
+  "version": "1.0.1",
+  "description": "对数组数据进行增删改操作",
   "main": "index.min.js",
   "scripts": {
     "build": "npm run compile && npm run uglify",

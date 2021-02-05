@@ -40,9 +40,17 @@
          * @param {*} isReplace 是否替换该条记录，默认合并不替换
          * @return {*}  source 返回所有数据源
          */
-        update(keyName,obj,isReplace = false){
-            let  value = obj[keyName];
-            let {index,item} = this.get(keyName,value);
+        update(key,obj,isReplace = false){
+            let  value ='';
+            if(typeof key ==='object' && key.constructor===Array){
+                value=[];
+                for(let i=0,l= key.length;i<l;i++){
+                    value.push(obj[key[i]]);
+                }
+             }else{
+                value = obj[key];
+             } 
+            let {index,item} = this.get(key,value);
             if(index>-1){
                 let newItem = {};
                 if(!isReplace){
@@ -81,7 +89,7 @@
         }
         /**
          * @description: 根据主键去查找记录
-         * @param {*} key 主键名
+         * @param {*} key 主键名,如果key是数组,对应的value也应该也是
          * @param {*} value 主键值
          * @return {*} {index,item} 返回记录所在的索引和记录，无则返回 index为-1
          */
@@ -90,6 +98,18 @@
             let item = {};
             for(let i = 0 ,l = this.source.length;i <l ;i ++){
                 let obj = this.source[i];
+                if(typeof key ==='object' && key.constructor===Array){
+                    //key是数组
+                    let newValue = [];
+                    for(let j = 0; j <key.length;j++){
+                        newValue.push(obj[key[j]]);
+                    }
+                    if(value.join('@') === newValue.join('@')){
+                        index = i;
+                        item = obj;
+                        break;
+                    }
+                }
                 let v =  obj[key];
                 if(v ===value ){
                     index = i;

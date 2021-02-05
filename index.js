@@ -60,12 +60,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         }, {
             key: "update",
-            value: function update(keyName, obj) {
+            value: function update(key, obj) {
                 var isReplace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-                var value = obj[keyName];
+                var value = '';
+                if ((typeof key === "undefined" ? "undefined" : _typeof(key)) === 'object' && key.constructor === Array) {
+                    value = [];
+                    for (var i = 0, l = key.length; i < l; i++) {
+                        value.push(obj[key[i]]);
+                    }
+                } else {
+                    value = obj[key];
+                }
 
-                var _get = this.get(keyName, value),
+                var _get = this.get(key, value),
                     index = _get.index,
                     item = _get.item;
 
@@ -117,7 +125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
             /**
              * @description: 根据主键去查找记录
-             * @param {*} key 主键名
+             * @param {*} key 主键名,如果key是数组,对应的value也应该也是
              * @param {*} value 主键值
              * @return {*} {index,item} 返回记录所在的索引和记录，无则返回 index为-1
              */
@@ -129,6 +137,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var item = {};
                 for (var i = 0, l = this.source.length; i < l; i++) {
                     var obj = this.source[i];
+                    if ((typeof key === "undefined" ? "undefined" : _typeof(key)) === 'object' && key.constructor === Array) {
+                        //key是数组
+                        var newValue = [];
+                        for (var j = 0; j < key.length; j++) {
+                            newValue.push(obj[key[j]]);
+                        }
+                        if (value.join('@') === newValue.join('@')) {
+                            index = i;
+                            item = obj;
+                            break;
+                        }
+                    }
                     var v = obj[key];
                     if (v === value) {
                         index = i;
